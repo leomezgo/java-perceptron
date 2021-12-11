@@ -17,7 +17,6 @@ public class Main {
         Data singletonico = Data.getInstance();
 
         // Inizializzazione grafico
-//        Graph graph = new Graph();
         CanvasGraph canvas = new CanvasGraph();
         JFrame frame = new JFrame();
         frame.setTitle("Grafico");
@@ -42,8 +41,6 @@ public class Main {
         }
 
         // Visualizzare punti di test e apprendimento
-//        graph.setTestPoints(testPoints);
-//        graph.setTrainPoints(trainPoints);
         canvas.setPointList(testPoints);
         double[] perceptronWeights = perceptron.getWeights();
         double slope = evaluateSlope(perceptronWeights);
@@ -67,11 +64,10 @@ public class Main {
 //            System.out.println("Output rete -> " + networkResponse);
 //            System.out.println("Output atteso -> " + desiredResponse);
         }
-        Point[] correctPoints = new Point[givenQuestions - wrongAnswer];
-        for (int i = 0; i < correctPoints.length; i++) {
-            correctPoints[i] = testPoints[pointIndex.get(i)];
-        }
-//        graph.showEvaluatedPoint(correctPoints);
+//        Point[] correctPoints = new Point[givenQuestions - wrongAnswer];
+//        for (int i = 0; i < correctPoints.length; i++) {
+//            correctPoints[i] = testPoints[pointIndex.get(i)];
+//        }
 
 
 
@@ -92,7 +88,6 @@ public class Main {
         System.out.println("w3: " + perceptron.getNormalizedWeights()[2]);
         // w1 x + w2 y + w3 bias = 0
         //y = -w1/w2 x - w3/w2
-//        graph.setThreeVector(perceptron.getNormalizedWeights());
 
         // Training della rete
         int stepDiApprendimento = 50;
@@ -121,8 +116,6 @@ public class Main {
                 correctlyEvaluatedPoints.add(testPoints[i]);
                 pointIndex.add(i);
             }
-//            System.out.println("Output rete -> " + networkResponse);
-//            System.out.println("Output atteso -> " + desiredResponse);
         }
         canvas.setCorrectlyEvaluatedList(correctlyEvaluatedPoints);
 
