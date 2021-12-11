@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Main {
 
-    static int numberOfTestPoints = 200;
-    static int numberOfTrainPoints = 100;
+    static int numberOfTestPoints = 100;
+    static int numberOfTrainPoints = 80;
 
     static double performacePercentage = 0;
     static double errorPercentage = 0;
@@ -14,20 +14,32 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Data singletonico = Data.getInstance();
-
         // Inizializzazione grafico
         CanvasGraph canvas = new CanvasGraph();
         JFrame frame = new JFrame();
         frame.setTitle("Grafico");
-        frame.setPreferredSize(new Dimension(500, 500));
+        frame.setPreferredSize(new Dimension(800, 800));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(canvas);
         frame.setVisible(true);
         frame.pack();
 
+        // Visualizzazione funzione da approssimare
+//        double m = 1.8;
+//        double q = -0.5;
+        double m = 1.1;
+        double q = -0.2;
+        double q_modificato = q * (double)canvas.getHeight();
+        int x1 = 0;
+        int y1 = (int)((q + 0.25) * (double)canvas.getHeight());
+        int x2 = canvas.getWidth();
+        int y2 = (int)(m * x2 + (q + 0.25) * (double)canvas.getHeight());
+        int[] pointArray = {x1, y1, x2, y2};
+        canvas.setPointArray(pointArray);
+
+
         // Inizializzazione rete neurale
-        Perceptron perceptron = new Perceptron(2);
+        Perceptron perceptron = new Perceptron(2, 0.05);
 
         // Inizializzazione esempi per test e apprendimento
         Point[] testPoints = new Point[numberOfTestPoints];
@@ -42,6 +54,7 @@ public class Main {
 
         // Visualizzare punti di test e apprendimento
         canvas.setPointList(testPoints);
+
         double[] perceptronWeights = perceptron.getWeights();
         double slope = evaluateSlope(perceptronWeights);
         double intercept = evaluateIntercept(perceptronWeights);
@@ -82,15 +95,11 @@ public class Main {
         System.out.println();
         System.out.println();
         System.out.println();
-        System.out.println("Vettore pesi");
-        System.out.println("w1: " + perceptron.getNormalizedWeights()[0]);
-        System.out.println("w2: " + perceptron.getNormalizedWeights()[1]);
-        System.out.println("w3: " + perceptron.getNormalizedWeights()[2]);
         // w1 x + w2 y + w3 bias = 0
         //y = -w1/w2 x - w3/w2
 
         // Training della rete
-        int stepDiApprendimento = 50;
+        int stepDiApprendimento = 100;
         for (int i = 0; i < stepDiApprendimento; i++) {
             int randomPointSelector = (int)(Math.random() * numberOfTrainPoints);
             perceptron.train(trainPoints[randomPointSelector]);
@@ -106,11 +115,13 @@ public class Main {
         wrongAnswer = 0;
         System.out.println("--- OUTPUT POST TRAINING ---");
         ArrayList<Point> correctlyEvaluatedPoints = new ArrayList<>(numberOfTestPoints);
+        ArrayList<Point> wrongEvaluatedPoints = new ArrayList<>(numberOfTestPoints);
         for (int i = 0; i < testPoints.length; i++) {
             int networkResponse = perceptron.response(testPoints[i]);
             int desiredResponse = Example.desiredOutput(testPoints[i]);
             givenQuestions++;
             if (networkResponse != desiredResponse) {
+                wrongEvaluatedPoints.add(testPoints[i]);
                 wrongAnswer++;
             } else {
                 correctlyEvaluatedPoints.add(testPoints[i]);
@@ -118,6 +129,7 @@ public class Main {
             }
         }
         canvas.setCorrectlyEvaluatedList(correctlyEvaluatedPoints);
+        canvas.setWrongEvaluatedList(wrongEvaluatedPoints);
 
 
 
