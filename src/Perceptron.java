@@ -1,5 +1,3 @@
-import java.awt.*;
-
 public class Perceptron {
 
     private double[] weights;
@@ -11,16 +9,9 @@ public class Perceptron {
         randomizeWeights();
     }
 
-    private double random(double min, double max) {
-        double fullRange = Math.abs(min) + Math.abs(max);
-        double shiftedRandom = Math.random() * fullRange;
-        double rangedRandom = shiftedRandom - fullRange/2;
-        return rangedRandom;
-    }
-
     private void randomizeWeights() {
         for (int i = 0; i < weights.length; i++) {
-            weights[i] = random(-1,1);
+            weights[i] = Main.rangedRandom(-1,1);
         }
     }
 
@@ -33,7 +24,7 @@ public class Perceptron {
     }
 
     public int response(Point point) {
-        double[] input = { point.getX(), point.getY(), 1.0};
+        double[] input = { point.x(), point.y(), 1.0};
         double dotProductResult = dotProduct(input, weights);
         if (dotProductResult > 0) {
             return 1;
@@ -42,7 +33,7 @@ public class Perceptron {
     }
 
     public void train(Point point) {
-        double[] input = { point.getX(), point.getY(), 1.0};
+        double[] input = { point.x(), point.y(), 1.0};
         if (response(point) != Example.desiredOutput(point)) {
             for (int i = 0; i < weights.length; i++) {
                 weights[i] += 2 * epsilon * Example.desiredOutput(point) * input[i];

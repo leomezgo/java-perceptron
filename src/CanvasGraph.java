@@ -1,9 +1,9 @@
-import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class CanvasGraph extends Canvas {
+public class CanvasGraph extends Canvas{
 
+    private ArrayList<Point> testPointList = new ArrayList<>(10);
     private ArrayList<Point> pointList = new ArrayList<Point>(10);
     private ArrayList<Point> correctlyEvaluatedList = new ArrayList<Point>(10);
     private ArrayList<Point> wrongEvaluatedList = new ArrayList<Point>(10);
@@ -27,6 +27,9 @@ public class CanvasGraph extends Canvas {
         g2.setColor(Color.BLACK);
 
         // Render HERE
+        if (!testPointList.isEmpty()) {
+            renderTestPointList(g2);
+        }
         if (pointArray.length > 0) {
             drawBaseLine(g2);
         }
@@ -39,8 +42,8 @@ public class CanvasGraph extends Canvas {
                 } else {
                     g2.setColor(new Color(255, 90, 95));
                 }
-                int posX = (int)((pt.getX() + 1.0) * (double)(getWidth() / 2));
-                int posY = (int)((pt.getY() + 1.0) * (double)(getHeight() / 2));
+                int posX = (int)((pt.x() + 1.0) * (double)(getWidth() / 2));
+                int posY = (int)((pt.y() + 1.0) * (double)(getHeight() / 2));
                 g2.drawOval(x((posX - diameter/2)), y((posY + diameter/2)), diameter, diameter);
             }
         }
@@ -57,6 +60,15 @@ public class CanvasGraph extends Canvas {
 ////            System.out.println("Slope=" + lineSlope + "\tIntercept=" + lineIntercept);
 //            drawLineFromSlopeAndIntercept(g2);
 //        }
+    }
+
+    private void renderTestPointList(Graphics2D g2) {
+        double diameter = 8.0;
+        g2.setColor(Color.BLACK);
+        for (int i = 0; i < testPointList.size(); i++) {
+            System.out.println("X=" + testPointList.get(i).x() + "\tY=" + testPointList.get(i).y());
+            g2.drawOval((int)(testPointList.get(i).x() - diameter/2), y((int)(testPointList.get(i).y() + diameter/2)), (int)diameter, (int)diameter);
+        }
     }
 
     private void drawBaseLine(Graphics2D g2) {
@@ -77,8 +89,8 @@ public class CanvasGraph extends Canvas {
         g2.setColor(Color.GREEN);
         for(int i = 0; i < correctlyEvaluatedList.size(); i++) {
             Point pt = correctlyEvaluatedList.get(i);
-            int posX = (int)((pt.getX() + 1.0) * (double)(getWidth() / 2));
-            int posY = (int)((pt.getY() + 1.0) * (double)(getHeight() / 2));
+            int posX = (int)((pt.x() + 1.0) * (double)(getWidth() / 2));
+            int posY = (int)((pt.y() + 1.0) * (double)(getHeight() / 2));
             g2.drawOval(x((posX - diameter/2)), y((posY + diameter/2)), diameter, diameter);
         }
     }
@@ -88,8 +100,8 @@ public class CanvasGraph extends Canvas {
         g2.setColor(Color.ORANGE);
         for(int i = 0; i < wrongEvaluatedList.size(); i++) {
             Point pt = wrongEvaluatedList.get(i);
-            int posX = (int)((pt.getX() + 1.0) * (double)(getWidth() / 2));
-            int posY = (int)((pt.getY() + 1.0) * (double)(getHeight() / 2));
+            int posX = (int)((pt.x() + 1.0) * (double)(getWidth() / 2));
+            int posY = (int)((pt.y() + 1.0) * (double)(getHeight() / 2));
             g2.drawOval(x((posX - diameter/2)), y((posY + diameter/2)), diameter, diameter);
         }
     }
@@ -99,8 +111,8 @@ public class CanvasGraph extends Canvas {
         g2.setColor(Color.BLACK);
         for(int i = 0; i < pointList.size(); i++) {
             Point pt = pointList.get(i);
-            int posX = (int)((pt.getX() + 1.0) * (double)(getWidth() / 2));
-            int posY = (int)((pt.getY() + 1.0) * (double)(getHeight() / 2));
+            int posX = (int)((pt.x() + 1.0) * (double)(getWidth() / 2));
+            int posY = (int)((pt.y() + 1.0) * (double)(getHeight() / 2));
             g2.drawOval(x((posX - diameter/2)), y((posY + diameter/2)), diameter, diameter);
         }
     }
@@ -141,4 +153,11 @@ public class CanvasGraph extends Canvas {
     public void changeLineColor(Color color) {
         lineColor = color;
     }
+
+    public void copyTestPoints(Point[] testPoints) {
+        for (Point pt:testPoints) {
+            testPointList.add(pt);
+        }
+    }
+
 }

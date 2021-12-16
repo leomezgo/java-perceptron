@@ -1,6 +1,6 @@
 public class Example {
     static int desiredOutput(Point pt) {
-        if (pt.getY() > f(pt.getX())) {
+        if (pt.y() > f(pt.x())) {
             return 1;
         }
         return -1;
