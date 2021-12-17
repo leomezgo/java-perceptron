@@ -8,6 +8,8 @@ public class CanvasGraph extends Canvas{
     private ArrayList<Point> correctlyEvaluatedList = new ArrayList<Point>(10);
     private ArrayList<Point> wrongEvaluatedList = new ArrayList<Point>(10);
     private int[] pointArray = new int[4];
+    private int[] limits = new int[4];
+    private int[] functionPoints = new int[2];
 
     private boolean isLineLoaded = false;
     private double lineSlope;
@@ -27,26 +29,33 @@ public class CanvasGraph extends Canvas{
         g2.setColor(Color.BLACK);
 
         // Render HERE
+        if (limits.length > 0)
+            renderLimits(g2);
+
         if (!testPointList.isEmpty()) {
             renderTestPointList(g2);
         }
-        if (pointArray.length > 0) {
-            drawBaseLine(g2);
+
+        if (functionPoints.length > 0) {
+            renderFunction(g2);
         }
-        if (!pointList.isEmpty()) {
-            int diameter = 6;
-            for(int i = 0; i < pointList.size(); i++) {
-                Point pt = pointList.get(i);
-                if (Example.desiredOutput(pt) == 1) {
-                    g2.setColor(new Color(30, 215, 96));
-                } else {
-                    g2.setColor(new Color(255, 90, 95));
-                }
-                int posX = (int)((pt.x() + 1.0) * (double)(getWidth() / 2));
-                int posY = (int)((pt.y() + 1.0) * (double)(getHeight() / 2));
-                g2.drawOval(x((posX - diameter/2)), y((posY + diameter/2)), diameter, diameter);
-            }
-        }
+//        if (pointArray.length > 0) {
+//            drawBaseLine(g2);
+//        }
+//        if (!pointList.isEmpty()) {
+//            int diameter = 6;
+//            for(int i = 0; i < pointList.size(); i++) {
+//                Point pt = pointList.get(i);
+//                if (Example.desiredOutput(pt) == 1) {
+//                    g2.setColor(new Color(30, 215, 96));
+//                } else {
+//                    g2.setColor(new Color(255, 90, 95));
+//                }
+//                int posX = (int)((pt.x() + 1.0) * (double)(getWidth() / 2));
+//                int posY = (int)((pt.y() + 1.0) * (double)(getHeight() / 2));
+//                g2.drawOval(x((posX - diameter/2)), y((posY + diameter/2)), diameter, diameter);
+//            }
+//        }
 
 //            drawPointList(g2);
 //        }
@@ -62,12 +71,33 @@ public class CanvasGraph extends Canvas{
 //        }
     }
 
+    private void renderLimits(Graphics2D g2) {
+        g2.setColor(new Color(255, 90, 95, 100));
+        g2.setStroke(new BasicStroke(5));
+        int xmin = translateX(limits[0]);
+        int ymin = resetYCoordinates(translateY(limits[1]));
+        int xmax = translateX(limits[2]);
+        int ymax = resetYCoordinates(translateY(limits[3]));
+        g2.drawLine(xmin, ymax, xmax, ymax);
+        g2.drawLine(xmin, ymax, xmin, ymin);
+        g2.drawLine(xmin, ymin, xmax, ymin);
+        g2.drawLine(xmax, ymin, xmax, ymax);
+        g2.setStroke(new BasicStroke(1));
+    }
+
+    private void renderFunction(Graphics2D g2) {
+        int x1 = translateX(limits[0]);
+        int y1 = resetYCoordinates(translateY(functionPoints[0]));
+        int x2 = translateX(limits[2]);
+        int y2 = resetYCoordinates(translateY(functionPoints[1]));
+        g2.drawLine(x1, y1, x2, y2);
+    }
+
     private void renderTestPointList(Graphics2D g2) {
         double diameter = 8.0;
         g2.setColor(Color.BLACK);
         for (int i = 0; i < testPointList.size(); i++) {
-            System.out.println("X=" + testPointList.get(i).x() + "\tY=" + testPointList.get(i).y());
-            g2.drawOval((int)(testPointList.get(i).x() - diameter/2), y((int)(testPointList.get(i).y() + diameter/2)), (int)diameter, (int)diameter);
+            g2.drawOval((translateX((int) (testPointList.get(i).x() - diameter/2))), (resetYCoordinates(translateY((int) (testPointList.get(i).y() + diameter/2)))), (int)diameter, (int)diameter);
         }
     }
 
@@ -117,12 +147,32 @@ public class CanvasGraph extends Canvas{
         }
     }
 
+    private int translateX(int x) {
+        return (x + getWidth() / 2);
+    }
+
+    private int translateY(int y) {
+        return (y + getHeight() / 2);
+    }
+
     private int x(int _x) {
         return _x;
     }
 
     private int y(int _y) {
         return getHeight() - _y;
+    }
+
+    private int resetYCoordinates(int y) {
+        return getHeight() - y;
+    }
+
+    public void setLimits(int[] limits) {
+        this.limits = limits;
+    }
+
+    public void setFunctionPoints(int[] points) {
+        functionPoints = points;
     }
 
     public void setPointList(Point[] points) {

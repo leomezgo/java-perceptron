@@ -17,18 +17,26 @@ public class Main {
         CanvasGraph canvas = new CanvasGraph();
         JFrame frame = new JFrame();
         frame.setTitle("Grafico");
-        frame.setPreferredSize(new Dimension(600, 300));
+        frame.setPreferredSize(new Dimension(900, 400));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(canvas);
         frame.setVisible(true);
         frame.pack();
 
-        int xmin = 0;
+
+        // Area di lavoro per la rete Perceptron
+        int xmin = -400;
         int xmax = 400;
-        int ymin = 0;
+        int ymin = -100;
         int ymax = 100;
 
+        int[] canvasLimits = {xmin, ymin, xmax, ymax};
 
+        canvas.setLimits(canvasLimits);
+
+        /*
+        * Generazione insiemi per test e training
+        */
         Point[] testPoints = new Point[numberOfTestPoints];
         Point[] trainPoints = new Point[numberOfTrainPoints];
 
@@ -44,19 +52,38 @@ public class Main {
             trainPoints[i] = new Point(xValue, yValue);
         }
 
+        /*
+        * Passaggio dati al grafico
+        * */
         canvas.copyTestPoints(testPoints);
+
+        // Retta da approssimare
+        int[] funzione = { (int)Example.f(xmin), (int)Example.f(xmax) };
+        canvas.setFunctionPoints(funzione);
+
+        /*
+         * Inizializzazione rete neurale Perceptron
+         *  */
         Perceptron perceptron = new Perceptron(2, 0.1);
 
+
+        // Test delle performance della rete
         int errors = 0;
         int questions = 0;
         testPerformance(testPoints, perceptron, errors, questions);
 
+        // Pesi della rete pre training
+        double[] nnWeights = perceptron.getWeights();
+
         System.out.println("INIZIO APPRENDIMENTO");
         for (Point pt:trainPoints) {
+
+            // Apprendimento
             perceptron.train(pt);
         }
         System.out.println("FINE APPRENDIMENTO");
 
+        // Test performance rete post training
         errors = 0;
         questions = 0;
         testPerformance(testPoints, perceptron, errors, questions);
@@ -197,11 +224,14 @@ public class Main {
     public static double rangedRandom(double min, double max) {
         double fullRange = Math.abs(min) + Math.abs(max);
         double shiftedRandom = Math.random() * fullRange;
-        double rangedRandom = shiftedRandom;
-        if (min < 0) {
-            rangedRandom = shiftedRandom - fullRange/2;
-        }
+        double rangedRandom = shiftedRandom - Math.abs(min);
         return rangedRandom;
+    }
+
+    public static double[] lineParams(double[] weights) {
+        double[] params = new double[2];
+//        params[0] =
+        return new double[2];
     }
 
     public static double evaluateSlope(double[] weights) {
