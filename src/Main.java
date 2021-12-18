@@ -218,7 +218,7 @@ public class Main {
 
         System.out.println("Domande=" + questions);
         System.out.println("Errori=" + errors);
-        System.out.println("Performance=" + ((double)(questions - errors)/(double)questions) + "%");
+        System.out.println("Performance=" + ((double)(questions - errors)/(double)questions) * 100.0 + "%");
     }
 
     public static double rangedRandom(double min, double max) {

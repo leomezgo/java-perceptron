@@ -10,6 +10,7 @@ public class CanvasGraph extends Canvas{
     private int[] pointArray = new int[4];
     private int[] limits = new int[4];
     private int[] functionPoints = new int[2];
+    private ArrayList<Integer> linesPoints = new ArrayList<Integer>(2);
 
     private boolean isLineLoaded = false;
     private double lineSlope;
@@ -173,6 +174,12 @@ public class CanvasGraph extends Canvas{
 
     public void setFunctionPoints(int[] points) {
         functionPoints = points;
+    }
+
+    public void setLinesPoints(int[] points) {
+        for (int i = 0; i < 4; i++) {
+            linesPoints.add(points[i]);
+        }
     }
 
     public void setPointList(Point[] points) {
