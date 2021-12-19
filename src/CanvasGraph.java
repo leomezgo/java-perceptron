@@ -40,6 +40,10 @@ public class CanvasGraph extends Canvas{
         if (functionPoints.length > 0) {
             renderFunction(g2);
         }
+
+        if (linesPoints.size() > 0) {
+            renderLines(g2);
+        }
 //        if (pointArray.length > 0) {
 //            drawBaseLine(g2);
 //        }
@@ -100,6 +104,12 @@ public class CanvasGraph extends Canvas{
         for (int i = 0; i < testPointList.size(); i++) {
             g2.drawOval((translateX((int) (testPointList.get(i).x() - diameter/2))), (resetYCoordinates(translateY((int) (testPointList.get(i).y() + diameter/2)))), (int)diameter, (int)diameter);
         }
+    }
+
+    private void renderLines(Graphics2D g2) {
+        g2.setColor(Color.GREEN);
+        g2.drawLine(translateX(linesPoints.get(0)), resetYCoordinates(translateY(linesPoints.get(1))), translateX(linesPoints.get(2)), resetYCoordinates(translateY(linesPoints.get(3))));
+        g2.setColor(Color.BLACK);
     }
 
     private void drawBaseLine(Graphics2D g2) {

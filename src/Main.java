@@ -74,6 +74,11 @@ public class Main {
 
         // Pesi della rete pre training
         double[] nnWeights = perceptron.getWeights();
+        double[] parameters = lineParams(nnWeights);
+
+        int[] linePoints = {xmin, (int)(parameters[0] * xmin + parameters[1]), xmax, (int)(parameters[0] * xmax + parameters[1])};
+        canvas.setLinesPoints(linePoints);
+
 
         System.out.println("INIZIO APPRENDIMENTO");
         for (Point pt:trainPoints) {
@@ -230,8 +235,11 @@ public class Main {
 
     public static double[] lineParams(double[] weights) {
         double[] params = new double[2];
-//        params[0] =
-        return new double[2];
+        // Slope
+        params[0] = (-1) * weights[0] / weights[1];
+        // Intercept
+        params[1] = (-1) * weights[2] / weights[1];
+        return params;
     }
 
     public static double evaluateSlope(double[] weights) {
