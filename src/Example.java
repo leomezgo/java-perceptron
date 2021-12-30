@@ -9,8 +9,8 @@ public class Example {
     static double f(double x) {
 //        double m = 1.8;
 //        double q = -0.5;
-        double m = 1.8;
-        double q = -0.2;
+        double m = 0.8;
+        double q = 300.0;
         return (m * x + q);
     }
 }

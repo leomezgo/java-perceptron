@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Main {
 
-    static int numberOfTestPoints = 50;
-    static int numberOfTrainPoints = 10;
+    static int numberOfTestPoints = 150;
+    static int numberOfTrainPoints = 100;
 
     static double performacePercentage = 0;
     static double errorPercentage = 0;
@@ -57,6 +57,13 @@ public class Main {
         * */
         canvas.copyTestPoints(testPoints);
 
+
+        for (int i = 0; i < numberOfTestPoints; i++) {
+            if (Example.desiredOutput(testPoints[i]) > 0)
+                canvas.setGreenCircles(testPoints[i]);
+        }
+
+
         // Retta da approssimare
         int[] funzione = { (int)Example.f(xmin), (int)Example.f(xmax) };
         canvas.setFunctionPoints(funzione);
@@ -64,7 +71,7 @@ public class Main {
         /*
          * Inizializzazione rete neurale Perceptron
          *  */
-        Perceptron perceptron = new Perceptron(2, 0.1);
+        Perceptron perceptron = new Perceptron(2, 0.5);
 
 
         // Test delle performance della rete
@@ -76,7 +83,7 @@ public class Main {
         double[] nnWeights = perceptron.getWeights();
         double[] parameters = lineParams(nnWeights);
 
-        int[] linePoints = {xmin, (int)(parameters[0] * xmin + parameters[1]), xmax, (int)(parameters[0] * xmax + parameters[1])};
+        int[] linePoints = {xmin, (int)((-nnWeights[0] * xmin - nnWeights[2])/nnWeights[1]), xmax, (int)((-nnWeights[0] * xmax - nnWeights[2])/nnWeights[1])};
         canvas.setLinesPoints(linePoints);
 
 
@@ -87,6 +94,16 @@ public class Main {
             perceptron.train(pt);
         }
         System.out.println("FINE APPRENDIMENTO");
+
+        nnWeights = perceptron.getWeights();
+        parameters = lineParams(nnWeights);
+
+        for (int i = 0; i < nnWeights.length; i++) {
+            System.out.println("weight[" + i + "]=" + nnWeights[i]);
+        }
+
+        int[] finalLinePoints = {xmin, (int)((-nnWeights[0] * xmin - nnWeights[2])/nnWeights[1]), xmax, (int)((-nnWeights[0] * xmax - nnWeights[2])/nnWeights[1])};
+        canvas.setFinalLinePoints(finalLinePoints);
 
         // Test performance rete post training
         errors = 0;
@@ -223,7 +240,8 @@ public class Main {
 
         System.out.println("Domande=" + questions);
         System.out.println("Errori=" + errors);
-        System.out.println("Performance=" + ((double)(questions - errors)/(double)questions) * 100.0 + "%");
+        System.out.print("Performance=" + String.format("%.2f", ((double)(questions - errors)/(double)questions) * 100.0));
+        System.out.println("%");
     }
 
     public static double rangedRandom(double min, double max) {

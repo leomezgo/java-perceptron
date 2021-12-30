@@ -4,6 +4,7 @@ import java.util.ArrayList;
 public class CanvasGraph extends Canvas{
 
     private ArrayList<Point> testPointList = new ArrayList<>(10);
+    private ArrayList<Point> greenCircles = new ArrayList<>(10);
     private ArrayList<Point> pointList = new ArrayList<Point>(10);
     private ArrayList<Point> correctlyEvaluatedList = new ArrayList<Point>(10);
     private ArrayList<Point> wrongEvaluatedList = new ArrayList<Point>(10);
@@ -11,6 +12,7 @@ public class CanvasGraph extends Canvas{
     private int[] limits = new int[4];
     private int[] functionPoints = new int[2];
     private ArrayList<Integer> linesPoints = new ArrayList<Integer>(2);
+    private ArrayList<Integer> finalLinePoints = new ArrayList<Integer>(2);
 
     private boolean isLineLoaded = false;
     private double lineSlope;
@@ -29,6 +31,10 @@ public class CanvasGraph extends Canvas{
 
         g2.setColor(Color.BLACK);
 
+        // Linee di centro canvas
+//        g2.drawLine(getWidth()/2, 0, getWidth()/2, getHeight());
+//        g2.drawLine(0, getHeight()/2, getWidth(), getHeight()/2);
+
         // Render HERE
         if (limits.length > 0)
             renderLimits(g2);
@@ -37,12 +43,20 @@ public class CanvasGraph extends Canvas{
             renderTestPointList(g2);
         }
 
+        if (!greenCircles.isEmpty()) {
+            renderGreenCircles(g2);
+        }
+
         if (functionPoints.length > 0) {
             renderFunction(g2);
         }
 
         if (linesPoints.size() > 0) {
             renderLines(g2);
+        }
+
+        if (finalLinePoints.size() > 0) {
+            renderFinalLine(g2);
         }
 //        if (pointArray.length > 0) {
 //            drawBaseLine(g2);
@@ -77,7 +91,8 @@ public class CanvasGraph extends Canvas{
     }
 
     private void renderLimits(Graphics2D g2) {
-        g2.setColor(new Color(255, 90, 95, 100));
+//        g2.setColor(new Color(255, 90, 95, 100));
+        g2.setColor(new Color(0, 0, 0, 30));
         g2.setStroke(new BasicStroke(5));
         int xmin = translateX(limits[0]);
         int ymin = resetYCoordinates(translateY(limits[1]));
@@ -109,6 +124,21 @@ public class CanvasGraph extends Canvas{
     private void renderLines(Graphics2D g2) {
         g2.setColor(Color.GREEN);
         g2.drawLine(translateX(linesPoints.get(0)), resetYCoordinates(translateY(linesPoints.get(1))), translateX(linesPoints.get(2)), resetYCoordinates(translateY(linesPoints.get(3))));
+        g2.setColor(Color.BLACK);
+    }
+
+    private void renderFinalLine(Graphics2D g2) {
+        g2.setColor(Color.BLUE);
+        g2.drawLine(translateX(finalLinePoints.get(0)), resetYCoordinates(translateY(finalLinePoints.get(1))), translateX(finalLinePoints.get(2)), resetYCoordinates(translateY(finalLinePoints.get(3))));
+        g2.setColor(Color.BLACK);
+    }
+
+    private void renderGreenCircles(Graphics2D g2) {
+        double diameter = 6.0;
+        g2.setColor(new Color(30, 215, 96));
+        for (int i = 0; i < greenCircles.size(); i++) {
+            g2.drawOval(translateX((int)(greenCircles.get(i).x() - diameter / 2)), resetYCoordinates(translateY((int) (greenCircles.get(i).y() + diameter/2))), (int)diameter, (int)diameter);
+        }
         g2.setColor(Color.BLACK);
     }
 
@@ -189,6 +219,18 @@ public class CanvasGraph extends Canvas{
     public void setLinesPoints(int[] points) {
         for (int i = 0; i < 4; i++) {
             linesPoints.add(points[i]);
+        }
+    }
+
+    public void setFinalLinePoints(int[] points) {
+        for (int i = 0; i < 4; i++) {
+            finalLinePoints.add(points[i]);
+        }
+    }
+
+    public void setGreenCircles(Point point) {
+        if (point != null) {
+            greenCircles.add(point);
         }
     }
 
