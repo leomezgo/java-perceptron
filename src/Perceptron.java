@@ -24,22 +24,33 @@ public class Perceptron {
     }
 
     public int response(Point point) {
-        double[] input = { point.x(), point.y(), 1.0};
-        double dotProductResult = dotProduct(input, weights);
-        if (dotProductResult > 0) {
+        double[] perceptronInput = { point.getX(), point.getY(), 1.0};
+        double dotProductResult = dotProduct(perceptronInput, weights);
+        if (dotProductResult > 0)
             return 1;
-        }
+
         return -1;
     }
 
-    public void train(Point point) {
-        double[] input = { point.x(), point.y(), 1.0};
-        if (response(point) != Example.desiredOutput(point)) {
-            for (int i = 0; i < weights.length; i++) {
-                weights[i] += 2 * epsilon * Example.desiredOutput(point) * input[i];
+    public void train(Point[] points) {
+        for (Point point: points) {
+            double[] input = { point.getX(), point.getY(), 1.0};
+            if (response(point) != Example.desiredOutput(point)) {
+                for (int i = 0; i < weights.length; i++) {
+                    weights[i] += 2 * epsilon * Example.desiredOutput(point) * input[i];
+                }
             }
         }
     }
+
+//    public void train(Point point) {
+//        double[] input = { point.x(), point.y(), 1.0};
+//        if (response(point) != Example.desiredOutput(point)) {
+//            for (int i = 0; i < weights.length; i++) {
+//                weights[i] += 2 * epsilon * Example.desiredOutput(point) * input[i];
+//            }
+//        }
+//    }
 
     public double[] getWeights() {
         return this.weights;

@@ -116,9 +116,9 @@ public class CanvasGraph extends Canvas{
     private void renderTestPointList(Graphics2D g2) {
         double diameter = 8.0;
         g2.setColor(Color.BLACK);
-        for (int i = 0; i < testPointList.size(); i++) {
-            g2.drawOval((translateX((int) (testPointList.get(i).x() - diameter/2))), (resetYCoordinates(translateY((int) (testPointList.get(i).y() + diameter/2)))), (int)diameter, (int)diameter);
-        }
+//        for (int i = 0; i < testPointList.size(); i++) {
+//            g2.drawOval((translateX((int) (testPointList.get(i).x() - diameter/2))), (resetYCoordinates(translateY((int) (testPointList.get(i).y() + diameter/2)))), (int)diameter, (int)diameter);
+//        }
     }
 
     private void renderLines(Graphics2D g2) {
@@ -136,9 +136,9 @@ public class CanvasGraph extends Canvas{
     private void renderGreenCircles(Graphics2D g2) {
         double diameter = 6.0;
         g2.setColor(new Color(30, 215, 96));
-        for (int i = 0; i < greenCircles.size(); i++) {
-            g2.drawOval(translateX((int)(greenCircles.get(i).x() - diameter / 2)), resetYCoordinates(translateY((int) (greenCircles.get(i).y() + diameter/2))), (int)diameter, (int)diameter);
-        }
+//        for (int i = 0; i < greenCircles.size(); i++) {
+//            g2.drawOval(translateX((int)(greenCircles.get(i).x() - diameter / 2)), resetYCoordinates(translateY((int) (greenCircles.get(i).y() + diameter/2))), (int)diameter, (int)diameter);
+//        }
         g2.setColor(Color.BLACK);
     }
 
@@ -158,34 +158,34 @@ public class CanvasGraph extends Canvas{
     private void drawCorrectlyEvaluatedList(Graphics2D g2) {
         int diameter = 8;
         g2.setColor(Color.GREEN);
-        for(int i = 0; i < correctlyEvaluatedList.size(); i++) {
-            Point pt = correctlyEvaluatedList.get(i);
-            int posX = (int)((pt.x() + 1.0) * (double)(getWidth() / 2));
-            int posY = (int)((pt.y() + 1.0) * (double)(getHeight() / 2));
-            g2.drawOval(x((posX - diameter/2)), y((posY + diameter/2)), diameter, diameter);
-        }
+//        for(int i = 0; i < correctlyEvaluatedList.size(); i++) {
+//            Point pt = correctlyEvaluatedList.get(i);
+//            int posX = (int)((pt.x() + 1.0) * (double)(getWidth() / 2));
+//            int posY = (int)((pt.y() + 1.0) * (double)(getHeight() / 2));
+//            g2.drawOval(x((posX - diameter/2)), y((posY + diameter/2)), diameter, diameter);
+//        }
     }
 
     private void drawWrongEvaluatedList(Graphics2D g2) {
         int diameter = 8;
         g2.setColor(Color.ORANGE);
-        for(int i = 0; i < wrongEvaluatedList.size(); i++) {
-            Point pt = wrongEvaluatedList.get(i);
-            int posX = (int)((pt.x() + 1.0) * (double)(getWidth() / 2));
-            int posY = (int)((pt.y() + 1.0) * (double)(getHeight() / 2));
-            g2.drawOval(x((posX - diameter/2)), y((posY + diameter/2)), diameter, diameter);
-        }
+//        for(int i = 0; i < wrongEvaluatedList.size(); i++) {
+//            Point pt = wrongEvaluatedList.get(i);
+//            int posX = (int)((pt.x() + 1.0) * (double)(getWidth() / 2));
+//            int posY = (int)((pt.y() + 1.0) * (double)(getHeight() / 2));
+//            g2.drawOval(x((posX - diameter/2)), y((posY + diameter/2)), diameter, diameter);
+//        }
     }
 
     private void drawPointList(Graphics2D g2) {
         int diameter = 4;
         g2.setColor(Color.BLACK);
-        for(int i = 0; i < pointList.size(); i++) {
-            Point pt = pointList.get(i);
-            int posX = (int)((pt.x() + 1.0) * (double)(getWidth() / 2));
-            int posY = (int)((pt.y() + 1.0) * (double)(getHeight() / 2));
-            g2.drawOval(x((posX - diameter/2)), y((posY + diameter/2)), diameter, diameter);
-        }
+//        for(int i = 0; i < pointList.size(); i++) {
+//            Point pt = pointList.get(i);
+//            int posX = (int)((pt.x() + 1.0) * (double)(getWidth() / 2));
+//            int posY = (int)((pt.y() + 1.0) * (double)(getHeight() / 2));
+//            g2.drawOval(x((posX - diameter/2)), y((posY + diameter/2)), diameter, diameter);
+//        }
     }
 
     private int translateX(int x) {

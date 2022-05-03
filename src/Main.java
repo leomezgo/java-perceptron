@@ -1,27 +1,26 @@
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-
 public class Main {
 
-    static int numberOfTestPoints = 150;
-    static int numberOfTrainPoints = 100;
+    static final int NUMBER_TEST_POINTS = 1000;
+    static final int NUMBER_TRAIN_POINTS = 400;
 
     static double performacePercentage = 0;
     static double errorPercentage = 0;
 
     public static void main(String[] args) {
 
+        Store store = Store.getInstance();
 
         // Inizializzazione grafico
-        CanvasGraph canvas = new CanvasGraph();
-        JFrame frame = new JFrame();
-        frame.setTitle("Grafico");
-        frame.setPreferredSize(new Dimension(900, 400));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(canvas);
-        frame.setVisible(true);
-        frame.pack();
+//        CanvasGraph canvas = new CanvasGraph();
+//        JFrame frame = new JFrame();
+//        frame.setTitle("Grafico");
+//        frame.setPreferredSize(new Dimension(900, 400));
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.add(canvas);
+//        frame.setVisible(true);
+//        frame.pack();
+
+        View view = new View();
 
 
         // Area di lavoro per la rete Perceptron
@@ -30,85 +29,165 @@ public class Main {
         int ymin = -100;
         int ymax = 100;
 
-        int[] canvasLimits = {xmin, ymin, xmax, ymax};
+        Point minAxisPoint = new Point(xmin, ymin);
+        Point maxAxisPoint = new Point(xmax, ymax);
 
-        canvas.setLimits(canvasLimits);
+        Point[] workingArea = {minAxisPoint, maxAxisPoint};
+        store.setWorkingArea(workingArea);
 
-        /*
-        * Generazione insiemi per test e training
-        */
-        Point[] testPoints = new Point[numberOfTestPoints];
-        Point[] trainPoints = new Point[numberOfTrainPoints];
+        final Point start = new Point(-400, (Example.f(-400)));
+        final Point end = new Point(400, (Example.f(400)));
+        final Point[] linearDesiredOutput = {start, end};
+        store.setLinearDesiredOutput(linearDesiredOutput);
 
-        for (int i = 0; i < numberOfTestPoints; i++) {
-            double xValue = rangedRandom(xmin, xmax);
-            double yValue = rangedRandom(ymin, ymax);
-            testPoints[i] = new Point(xValue, yValue);
+        // Generating test points
+        for (int i = 0; i < NUMBER_TEST_POINTS; i++) {
+            store.addPointToTestPoints(new Point(randomizer(xmin, xmax), randomizer(ymin, ymax)));
         }
 
-        for (int i = 0; i < numberOfTrainPoints; i++) {
-            double xValue = rangedRandom(xmin, xmax);
-            double yValue = rangedRandom(ymin, ymax);
-            trainPoints[i] = new Point(xValue, yValue);
+        Perceptron perceptron = new Perceptron(2, 0.1);
+
+        for (int i = 0; i < 10; i++) {
+            Point p = store.getTestPointByIndex(i);
+            System.out.print("Punto in posizione | X: " + p.getX() + "\tY: " + p.getY());
+            System.out.print("\t| f(x): " + Example.f(p.getX()) + "\t desired: " + Example.desiredOutput(p));
+            System.out.println(" \t| perceptron output: " + perceptron.response(p));
+        }
+        double[] weights = perceptron.getWeights();
+        System.out.println("Pesi perceptron: " + weights[0] + " " + weights[1] + " " + weights[2]);
+
+        double slope = (-1.0) * weights[0] / weights[1];
+        double intecept = (-1.0) * weights[2] / weights[1];
+
+        System.out.println("Slope(m) = " + slope);
+        System.out.println("Intercept(q) = " + intecept);
+
+        // Valutare l'output lineare del perceptron
+        Point startPoint = new Point(-400, evaluateLinearOutputFromPerceptronWeights(-400, weights));
+        Point endPoint = new Point(400, evaluateLinearOutputFromPerceptronWeights(400, weights));
+        Point[] linearOutput = {startPoint, endPoint};
+        store.setLinearOutputPreTraining(linearOutput);
+
+        // Valutazione performance
+        int correctAnswers = 0;
+        for (int i = 0; i < NUMBER_TEST_POINTS; i++) {
+            Point p = store.getTestPointByIndex(i);
+            int desired = Example.desiredOutput(p);
+            int guess = perceptron.response(p);
+            if (guess == desired) {
+                correctAnswers++;
+            }
+        }
+        System.out.println("Corrette: " + correctAnswers + "  su " + NUMBER_TEST_POINTS + " test points");
+
+        // Generating training points
+        Point[] points = new Point[NUMBER_TRAIN_POINTS];
+        for (int i = 0; i < NUMBER_TRAIN_POINTS; i++) {
+            store.addPointToTrainPoints(new Point(randomizer(xmin, xmax), randomizer(ymin, ymax)));
+            points[i] = store.getTrainPointByIndex(i);
         }
 
-        /*
-        * Passaggio dati al grafico
-        * */
-        canvas.copyTestPoints(testPoints);
+        perceptron.train(points);
 
+        weights = perceptron.getWeights();
+        System.out.println("Pesi perceptron: " + weights[0] + " " + weights[1] + " " + weights[2]);
+        slope = (-1.0) * weights[0] / weights[1];
+        intecept = (-1.0) * weights[2] / weights[1];
+        System.out.println("Slope(m) = " + slope);
+        System.out.println("Intercept(q) = " + intecept);
+        startPoint = new Point(-400, evaluateLinearOutputFromPerceptronWeights(-400, weights));
+        endPoint = new Point(400, evaluateLinearOutputFromPerceptronWeights(400, weights));
+        linearOutput = new Point[]{startPoint, endPoint};
+        store.setLinearOutput(linearOutput);
 
-        for (int i = 0; i < numberOfTestPoints; i++) {
-            if (Example.desiredOutput(testPoints[i]) > 0)
-                canvas.setGreenCircles(testPoints[i]);
+        correctAnswers = 0;
+        for (int i = 0; i < NUMBER_TEST_POINTS; i++) {
+            Point p = store.getTestPointByIndex(i);
+            int desired = Example.desiredOutput(p);
+            int guess = perceptron.response(p);
+            if (guess == desired) {
+                correctAnswers++;
+            }
         }
+        System.out.println("Corrette: " + correctAnswers + "  su " + NUMBER_TEST_POINTS + " test points");
 
-
-        // Retta da approssimare
-        int[] funzione = { (int)Example.f(xmin), (int)Example.f(xmax) };
-        canvas.setFunctionPoints(funzione);
-
-        /*
-         * Inizializzazione rete neurale Perceptron
-         *  */
-        Perceptron perceptron = new Perceptron(2, 0.5);
-
-
-        // Test delle performance della rete
-        int errors = 0;
-        int questions = 0;
-        testPerformance(testPoints, perceptron, errors, questions);
-
-        // Pesi della rete pre training
-        double[] nnWeights = perceptron.getWeights();
-        double[] parameters = lineParams(nnWeights);
-
-        int[] linePoints = {xmin, (int)((-nnWeights[0] * xmin - nnWeights[2])/nnWeights[1]), xmax, (int)((-nnWeights[0] * xmax - nnWeights[2])/nnWeights[1])};
-        canvas.setLinesPoints(linePoints);
-
-
-        System.out.println("INIZIO APPRENDIMENTO");
-        for (Point pt:trainPoints) {
-
-            // Apprendimento
-            perceptron.train(pt);
-        }
-        System.out.println("FINE APPRENDIMENTO");
-
-        nnWeights = perceptron.getWeights();
-        parameters = lineParams(nnWeights);
-
-        for (int i = 0; i < nnWeights.length; i++) {
-            System.out.println("weight[" + i + "]=" + nnWeights[i]);
-        }
-
-        int[] finalLinePoints = {xmin, (int)((-nnWeights[0] * xmin - nnWeights[2])/nnWeights[1]), xmax, (int)((-nnWeights[0] * xmax - nnWeights[2])/nnWeights[1])};
-        canvas.setFinalLinePoints(finalLinePoints);
-
-        // Test performance rete post training
-        errors = 0;
-        questions = 0;
-        testPerformance(testPoints, perceptron, errors, questions);
+//        canvas.setLimits(canvasLimits);
+//
+//        /*
+//        * Generazione insiemi per test e training
+//        */
+//        Point[] testPoints = new Point[numberOfTestPoints];
+//        Point[] trainPoints = new Point[numberOfTrainPoints];
+//
+//        for (int i = 0; i < numberOfTestPoints; i++) {
+//            double xValue = rangedRandom(xmin, xmax);
+//            double yValue = rangedRandom(ymin, ymax);
+//            testPoints[i] = new Point(xValue, yValue);
+//        }
+//
+//        for (int i = 0; i < numberOfTrainPoints; i++) {
+//            double xValue = rangedRandom(xmin, xmax);
+//            double yValue = rangedRandom(ymin, ymax);
+//            trainPoints[i] = new Point(xValue, yValue);
+//        }
+//
+//        /*
+//        * Passaggio dati al grafico
+//        * */
+//        canvas.copyTestPoints(testPoints);
+//
+//
+//        for (int i = 0; i < numberOfTestPoints; i++) {
+//            if (Example.desiredOutput(testPoints[i]) > 0)
+//                canvas.setGreenCircles(testPoints[i]);
+//        }
+//
+//
+//        // Retta da approssimare
+//        int[] funzione = { (int)Example.f(xmin), (int)Example.f(xmax) };
+//        canvas.setFunctionPoints(funzione);
+//
+//        /*
+//         * Inizializzazione rete neurale Perceptron
+//         *  */
+//        Perceptron perceptron = new Perceptron(2, 0.5);
+//
+//
+//        // Test delle performance della rete
+//        int errors = 0;
+//        int questions = 0;
+//        testPerformance(testPoints, perceptron, errors, questions);
+//
+//        // Pesi della rete pre training
+//        double[] nnWeights = perceptron.getWeights();
+//        double[] parameters = lineParams(nnWeights);
+//
+//        int[] linePoints = {xmin, (int)((-nnWeights[0] * xmin - nnWeights[2])/nnWeights[1]), xmax, (int)((-nnWeights[0] * xmax - nnWeights[2])/nnWeights[1])};
+//        canvas.setLinesPoints(linePoints);
+//
+//
+//        System.out.println("INIZIO APPRENDIMENTO");
+//        for (Point pt:trainPoints) {
+//
+//            // Apprendimento
+//            perceptron.train(pt);
+//        }
+//        System.out.println("FINE APPRENDIMENTO");
+//
+//        nnWeights = perceptron.getWeights();
+//        parameters = lineParams(nnWeights);
+//
+//        for (int i = 0; i < nnWeights.length; i++) {
+//            System.out.println("weight[" + i + "]=" + nnWeights[i]);
+//        }
+//
+//        int[] finalLinePoints = {xmin, (int)((-nnWeights[0] * xmin - nnWeights[2])/nnWeights[1]), xmax, (int)((-nnWeights[0] * xmax - nnWeights[2])/nnWeights[1])};
+//        canvas.setFinalLinePoints(finalLinePoints);
+//
+//        // Test performance rete post training
+//        errors = 0;
+//        questions = 0;
+//        testPerformance(testPoints, perceptron, errors, questions);
 
         /*
         // Visualizzazione funzione da approssimare
@@ -242,6 +321,19 @@ public class Main {
         System.out.println("Errori=" + errors);
         System.out.print("Performance=" + String.format("%.2f", ((double)(questions - errors)/(double)questions) * 100.0));
         System.out.println("%");
+    }
+
+    public static double evaluateLinearOutputFromPerceptronWeights(double value, double[] weights) {
+        double slope = (-1.0) * weights[0] / weights[1];
+        double intecept = (-1.0) * weights[2] / weights[1];
+        return slope * value + intecept * 200;
+    }
+
+    public static double randomizer(double min, double max) {
+        final double rangeWidth = max - min;
+        final double randomValue = Math.random() * rangeWidth;
+        final double outValue = randomValue + min;
+        return outValue;
     }
 
     public static double rangedRandom(double min, double max) {
